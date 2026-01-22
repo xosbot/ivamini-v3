@@ -11,11 +11,21 @@ def extract_depth(text: str) -> str:
     return "LOW"
 
 
+def has_execution_verbs(text: str) -> bool:
+    """Check if text contains execution verbs (forbidden in PLAN mode)"""
+    execution_verbs = [
+        "run ", "execute ", "implement ", "build ", "start ", "begin ",
+        "do ", "perform ", "conduct ", "trigger ", "launch ", "activate "
+    ]
+    text_lower = text.lower()
+    return any(verb in text_lower for verb in execution_verbs)
+
+
 def enforce_mode(task_type: str, content: str) -> str:
     if task_type == "QUESTION":
         return f"Provide a definition only.\n\n{content}"
     if task_type == "PLAN":
-        return f"Provide structured steps. Do not execute.\n\n{content}"
+        return f"Provide a deterministic 7-part plan:\n1. Objective\n2. Assumptions\n3. Constraints\n4. Step-by-step plan\n5. Risks\n6. Validation checks\n7. What is NOT being done\n\n{content}"
     return content
 
 
@@ -90,13 +100,16 @@ class Orchestrator:
             # Inject session memory (read-only)
             session_context = self.session_memory.summarize()
 
+            # PLAN mode uses special system prompt
             result = self.analysis_agent.run(
                 prompt,
-                session_context=session_context
+                session_context=session_context,
+                task_type=task.task_type  # Pass task type to agent
             )
 
-            # Store summary into session memory (controlled)
-            if result and "summary" in result:
+            # PLAN mode: read-only, no memory writes
+            # REVIEW/QUESTION: write summary to memory
+            if task.task_type != "PLAN" and result and "summary" in result:
                 self.session_memory.add(
                     result["summary"],
                     kind=task.task_type

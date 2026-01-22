@@ -1,4 +1,4 @@
-from ivamini.llm.interface import LocalLLM
+from ivamini.llm.interface import LocalLLM, SYSTEM_PROMPT, PLAN_SYSTEM_PROMPT
 from ivamini.memory.facts import load_facts
 
 
@@ -12,9 +12,10 @@ class AnalysisAgent:
         self.llm = LocalLLM()
         self.facts = load_facts()
 
-    def run(self, content: str, session_context: str = ""):
+    def run(self, content: str, session_context: str = "", task_type: str = "QUESTION"):
         """
         Run analysis with optional session context injection.
+        Uses PLAN_SYSTEM_PROMPT for PLAN mode, standard SYSTEM_PROMPT otherwise.
         """
 
         # Inject session context (read-only)
@@ -35,4 +36,7 @@ class AnalysisAgent:
                 + content
             )
 
-        return self.llm.analyze(content)
+        # Use appropriate system prompt based on task type
+        system_prompt = PLAN_SYSTEM_PROMPT if task_type == "PLAN" else SYSTEM_PROMPT
+        
+        return self.llm.analyze(content, system_prompt=system_prompt)
