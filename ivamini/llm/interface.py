@@ -31,21 +31,31 @@ class LocalLLM:
     def analyze(self, prompt: str) -> dict:
         start_time = time.time()
         
-        response = ollama.chat(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": prompt},
-            ]
-        )
+        try:
+            response = ollama.chat(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt},
+                ]
+            )
 
-        content = response["message"]["content"].strip()
-        duration_ms = int((time.time() - start_time) * 1000)
+            content = response["message"]["content"].strip()
+            duration_ms = int((time.time() - start_time) * 1000)
 
-        return {
-            "status": "SUCCESS",
-            "summary": content[:400],
-            "confidence": "LOCAL_LLM_OLLAMA_LLAMA3_1B",
-            "raw_output": content,
-            "duration_ms": duration_ms
-        }
+            return {
+                "status": "SUCCESS",
+                "summary": content[:400],
+                "confidence": "LOCAL_LLM_OLLAMA_LLAMA3_1B",
+                "raw_output": content,
+                "duration_ms": duration_ms
+            }
+        except Exception as e:
+            duration_ms = int((time.time() - start_time) * 1000)
+            return {
+                "status": "ERROR",
+                "error": f"Ollama connection failed: {str(e)}",
+                "confidence": None,
+                "raw_output": "",
+                "duration_ms": duration_ms
+            }

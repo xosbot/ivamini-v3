@@ -36,7 +36,7 @@ def main():
             content = parsed_content
 
         orchestrator = Orchestrator()
-        task = orchestrator.create_task(mode, content)
+        task = orchestrator.create_task(mode, mode, content)
 
         print("\nINTERPRETATION:")
         print(f"Task ID: {task.task_id}")

@@ -1,0 +1,85 @@
+2️⃣ IVAmini v1.0 FREEZE CHECKLIST
+
+Use this before declaring v1.0 stable.
+If any item is ❌ → do not freeze.
+
+✅ IVAmini v1.0 Freeze Checklist
+🧠 Architecture
+
+ Clear separation between Orchestrator, Agent, Memory, LLM
+
+ No runtime logic in __init__.py
+
+ No circular imports
+
+ Task creation centralized in Orchestrator
+
+ Function signatures stable and documented
+
+🔐 Safety & Control
+
+ LLM has NO execution capability
+
+ LLM cannot write memory or files
+
+ PLAN mode cannot trigger side effects
+
+ QUESTION mode restricted to definitions
+
+ REVIEW mode restricted to analysis & risks
+
+ COMMAND mode disabled or permission-gated
+
+🧠 Memory
+
+ Session memory is in-memory only
+
+ Session memory clears on restart
+
+ No disk writes during runtime
+
+ Facts memory is read-only
+
+ Memory injection is explicit and visible
+
+⚙️ Runtime Stability
+
+ System runs end-to-end from main.py
+
+ No unhandled exceptions in normal use
+
+ All imports resolve correctly
+
+ Ollama connectivity errors handled gracefully
+
+ Debug mode (if present) is optional and isolated
+
+📦 Repo Hygiene
+
+ .gitignore excludes venv, caches, logs
+
+ No secrets, tokens, or absolute paths
+
+ Repo builds cleanly on a fresh clone
+
+ README or ARCHITECTURE.md present
+
+🧾 Observability
+
+ Clear task lifecycle visibility
+
+ Optional logging (not print spam)
+
+ [STATUS] command works
+
+ [MEMORY] command works
+
+🔒 Freeze Declaration
+
+ No active refactors
+
+ No experimental branches pending
+
+ Baseline tag created (e.g. v1.0-local)
+
+If all checked → IVAmini v1.0 is frozen.
