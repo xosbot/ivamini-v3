@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IVAmini — Local Reasoning Engine</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>IVAmini</h1>
+            <p class="subtitle">Disciplined Local Reasoning Engine</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Left Panel: Input & Controls -->
+            <div class="panel input-panel">
+                <h2>Task</h2>
+                
+                <!-- Mode Selector -->
+                <div class="control-group">
+                    <label for="mode">Mode:</label>
+                    <select id="mode" name="mode">
+                        <option value="QUESTION">QUESTION — Definition</option>
+                        <option value="REVIEW">REVIEW — Risk Analysis</option>
+                        <option value="PLAN">PLAN — Structured Plan</option>
+                    </select>
+                </div>
+
+                <!-- Input Textarea -->
+                <div class="control-group">
+                    <label for="content">Your input:</label>
+                    <textarea 
+                        id="content" 
+                        name="content" 
+                        placeholder="Enter your question, topic for review, or plan request..."
+                        rows="8"
+                    ></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button id="submit-btn" class="btn btn-primary" onclick="executeTask()">
+                        Execute
+                    </button>
+                    <button id="clear-btn" class="btn btn-secondary" onclick="clearInput()">
+                        Clear
+                    </button>
+                </div>
+
+                <!-- Status Indicator -->
+                <div id="status-indicator" class="status-indicator" style="display:none;">
+                    <div class="spinner"></div>
+                    <span>Processing...</span>
+                </div>
+            </div>
+
+            <!-- Right Panel: Output & System Info -->
+            <div class="panel output-panel">
+                <!-- Output -->
+                <div class="output-section">
+                    <h2>Result</h2>
+                    <div id="output" class="output-box">
+                        <p class="placeholder">Output will appear here...</p>
+                    </div>
+                </div>
+
+                <!-- Tabs: Status & Memory -->
+                <div class="tabs">
+                    <button class="tab-button active" onclick="switchTab('status-tab', this)">
+                        STATUS
+                    </button>
+                    <button class="tab-button" onclick="switchTab('memory-tab', this)">
+                        MEMORY
+                    </button>
+                </div>
+
+                <!-- Status Tab -->
+                <div id="status-tab" class="tab-content active">
+                    <div class="info-box">
+                        <div id="status-info" class="status-info">
+                            <p class="placeholder">Click "Refresh Status" to load system information</p>
+                        </div>
+                        <button class="btn btn-small" onclick="loadStatus()">Refresh Status</button>
+                    </div>
+                </div>
+
+                <!-- Memory Tab -->
+                <div id="memory-tab" class="tab-content">
+                    <div class="info-box">
+                        <div id="memory-info" class="memory-info">
+                            <p class="placeholder">Session memory will appear here...</p>
+                        </div>
+                        <button class="btn btn-small" onclick="loadMemory()">Refresh Memory</button>
+                        <button class="btn btn-small btn-danger" onclick="restartSession()">Restart Session</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>IVAmini v1.0 | Local reasoning engine with no execution capability</p>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
