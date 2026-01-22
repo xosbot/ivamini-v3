@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual environment
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+
+# Runtime logs & data
+*.jsonl
+execution_log.jsonl
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Workspace output
+ivamini/workspace/
+*.txt
+
+# IDE & OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*.egg-info/
+dist/
+build/
+
+# Windows shortcuts
+*.lnk
+rm "ivamini - Shortcut (2).lnk"
+rm "ivamini - Shortcut.lnk"
+
+git status  # should show no tracked files matching .gitignore rules

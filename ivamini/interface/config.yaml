@@ -1,0 +1,20 @@
+environment: dev
+
+logging:
+  enabled: true
+  level: INFO
+
+permissions:
+  default: READ
+  allow_destructive: false
+
+voice:
+  enabled: false
+  require_mode: true
+
+llm:
+  backend: ollama
+  model: "llama3.2:1b"
+
+workspace:
+  path: ivamini/workspace
