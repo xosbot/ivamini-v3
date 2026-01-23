@@ -35,9 +35,10 @@ class Orchestrator:
     Owns permissions, memory, and agent coordination.
     """
 
-    def __init__(self):
+    def __init__(self, config: dict = None):
         self.analysis_agent = AnalysisAgent()
         self.session_memory = SessionMemory()
+        self.config = config or {}
 
     def create_task(self, mode: str, task_type: str, content: str):
         """
@@ -81,6 +82,29 @@ class Orchestrator:
 
         # REVIEW / PLAN / QUESTION
         if task.task_type in ("REVIEW", "PLAN", "QUESTION"):
+            # DRY MODE: Short-circuit inference if enabled
+            if self.config.get("dry_mode"):
+                dry_result = {}
+                if task.task_type == "PLAN":
+                    dry_result = {
+                        "plan": (
+                            "1. Objective\n"
+                            "2. Assumptions\n"
+                            "3. Constraints\n"
+                            "4. Step-by-step Plan\n"
+                            "5. Risks\n"
+                            "6. Validation Checks\n"
+                            "7. Explicit Non-Goals"
+                        )
+                    }
+                elif task.task_type == "QUESTION":
+                    dry_result = {"summary": "[DRY MODE] Definition unavailable (LLM disabled)."}
+                elif task.task_type == "REVIEW":
+                    dry_result = {"summary": "[DRY MODE] Analysis unavailable (LLM disabled)."}
+                
+                duration_ms = int((time.time() - start_time) * 1000)
+                return TaskOutput.from_result(task.task_id, task.task_type, dry_result, duration_ms).to_dict()
+
             depth = extract_depth(content)
 
             if task.task_type == "REVIEW":

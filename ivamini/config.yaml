@@ -14,7 +14,7 @@ voice:
 
 llm:
   backend: ollama
-  model: "llama3.2:1b"
+  model: "tinyllama"
 
 workspace:
   path: ivamini/workspace
