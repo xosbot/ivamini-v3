@@ -13,8 +13,8 @@ voice:
   require_mode: true
 
 llm:
-  backend: ollama
-  model: "tinyllama"
+  backend: disabled
+  model: "none"
 
 workspace:
   path: ivamini/workspace

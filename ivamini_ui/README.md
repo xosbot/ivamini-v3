@@ -130,10 +130,9 @@ To add features:
 # app.run(port=5001, ...)
 ```
 
-### Ollama Connection Failed
-- Ensure Ollama is running locally
-- Check error message in UI output panel
-- System will fail gracefully with clear error message
+### LLM Not Configured
+- This system does not support local LLM execution.
+- System will return an error message if reasoning is attempted.
 
 ### Session Not Updating
 - Click "Refresh Status" or "Refresh Memory" buttons
