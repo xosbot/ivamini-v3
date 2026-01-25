@@ -1,60 +1,47 @@
 from ivamini.llm.adapters.gemini import GeminiAdapter
-from ivamini.llm.adapters.groq import GroqAdapter
-from ivamini.llm.adapters.openrouter import OpenRouterAdapter
 
 class ModelRouter:
     """
-    Central Routing Layer for IVA-Cortex v1.0.
-    Determines the best provider based on task mode and system state.
+    Minimal Routing Layer for IVA-Cortex v1.0.
+    Routes ALL requests to Gemini.
     """
 
     def __init__(self):
-        # Initialize providers
+        # Initialize only Gemini as per constraints
         self.gemini = GeminiAdapter()
-        self.groq = GroqAdapter()
-        self.openrouter = OpenRouterAdapter()
 
-    def route(self, mode: str, prompt: str, metadata: dict = None) -> str:
+    def route(self, mode: str, prompt: str, system_prompt: str = None, metadata: dict = None) -> dict:
         """
-        Routes the request to the appropriate provider.
-
-        Routing Rules:
-        1. PLAN / REVIEW -> Gemini (High reasoning)
-        2. QUESTION (short) -> Groq (Low latency)
-        3. Fallback -> OpenRouter (if primary unavailable)
-
-        Args:
-            mode (str): Task mode (PLAN, REVIEW, QUESTION, etc.)
-            prompt (str): The prompt content.
-            metadata (dict, optional): Additional context (e.g., depth).
-
-        Returns:
-            str: The generated text response.
+        Routes the request to Gemini.
+        Returns a dictionary to match the expected interface of AnalysisAgent/Orchestrator.
         """
-        if metadata is None:
-            metadata = {}
+        # Strict routing: Always Gemini
+        import time
+        start_time = time.time()
 
-        # Rule 1: High Reasoning Tasks
-        if mode in ["PLAN", "REVIEW"]:
-            if self.gemini.is_available():
-                return self.gemini.generate(prompt)
-            else:
-                # Fallback
-                return self.openrouter.generate(prompt)
+        raw_response = self.gemini.generate(prompt, system_prompt=system_prompt)
 
-        # Rule 2: Low Latency Tasks
-        if mode == "QUESTION":
-            # Simple heuristic for "short" question (e.g., < 100 chars) could go here
-            # For now, default all QUESTIONs to Groq as per design
-            if self.groq.is_available():
-                return self.groq.generate(prompt)
-            else:
-                # Fallback
-                return self.openrouter.generate(prompt)
+        duration_ms = int((time.time() - start_time) * 1000)
 
-        # Default / Other Modes
-        # Prefer capability (Gemini) over speed for unknown tasks
-        if self.gemini.is_available():
-            return self.gemini.generate(prompt)
+        # Check for error prefix from adapter
+        status = "SUCCESS"
+        if raw_response.startswith("ERROR:"):
+            status = "ERROR"
+            # If error, the raw_response is the error message
+            error_msg = raw_response
+            summary = ""
+        else:
+            summary = raw_response
 
-        return self.openrouter.generate(prompt)
+        # Return format must match what AnalysisAgent/Orchestrator expects
+        # previously LocalLLM returned:
+        # { "status": ..., "summary": ..., "confidence": ..., "raw_output": ..., "duration_ms": ... }
+
+        return {
+            "status": status,
+            "summary": summary,  # The actual content
+            "error": raw_response if status == "ERROR" else None,
+            "confidence": "GEMINI_PRO",
+            "raw_output": raw_response,
+            "duration_ms": duration_ms
+        }

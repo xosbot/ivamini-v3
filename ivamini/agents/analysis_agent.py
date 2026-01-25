@@ -1,15 +1,17 @@
-from ivamini.llm.interface import LocalLLM, SYSTEM_PROMPT, PLAN_SYSTEM_PROMPT
+from ivamini.llm.router import ModelRouter
+from ivamini.llm.interface import SYSTEM_PROMPT, PLAN_SYSTEM_PROMPT
 from ivamini.memory.facts import load_facts
 
 
 class AnalysisAgent:
     """
-    Uses LLM ONLY for reasoning.
+    Uses ModelRouter for reasoning.
     No execution, no tools, no memory writes.
     """
 
     def __init__(self):
-        self.llm = LocalLLM()
+        # REPLACE: LocalLLM with ModelRouter
+        self.router = ModelRouter()
         self.facts = load_facts()
 
     def run(self, content: str, session_context: str = "", task_type: str = "QUESTION"):
@@ -39,4 +41,9 @@ class AnalysisAgent:
         # Use appropriate system prompt based on task type
         system_prompt = PLAN_SYSTEM_PROMPT if task_type == "PLAN" else SYSTEM_PROMPT
         
-        return self.llm.analyze(content, system_prompt=system_prompt)
+        # REPLACE: self.llm.analyze -> self.router.route
+        return self.router.route(
+            mode=task_type,
+            prompt=content,
+            system_prompt=system_prompt
+        )
