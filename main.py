@@ -20,9 +20,6 @@ def main():
     model_name = config.get('llm', {}).get('model', 'Unknown')
     print(f"LLM Model:   {model_name}")
 
-    if "tiny" in model_name.lower():
-        print("             (Running in Low-Resource Compatibility Mode)")
-
     ToolRegistry.register("get_time", GetTimeTool())
     # SAFETY: Disabled for v1.0-local (Reasoning Only / Local Scope)
     # ToolRegistry.register("web_search", WebSearchTool())
@@ -63,14 +60,6 @@ def main():
             error_msg = payload.get("error") if isinstance(payload, dict) else str(payload)
             print(f"❌ FAILED: {error_msg}")
 
-            if "connection failed" in str(error_msg).lower() or "500" in str(error_msg):
-                print("\n   [!] INFRASTRUCTURE ERROR")
-                print("   1. Ensure Ollama is running ('ollama serve')")
-                print("   2. Check available RAM/VRAM")
-                print("   3. If persistent, enable 'dry_mode': true in config.json")
-                if "exit status 2" in str(error_msg):
-                    print("   3. Model file corrupt? Try: 'ollama rm <model> && ollama pull <model>'")
-                    print("   4. Hardware incompatible? Try switching model to 'tinyllama' in config.json")
         else:
             print("\nRESPONSE:")
             print(result.get("result", "No content returned."))

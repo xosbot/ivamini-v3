@@ -57,11 +57,11 @@ class Orchestrator:
         if task.mode == "STATUS":
             result = {
                 "status": "SUCCESS",
-                "model": "llama3.2:1b",
+                "model": "none",
                 "context_length": 2048,
                 "permissions": "READ",
                 "memory_entries": len(self.session_memory.entries),
-                "ollama": "CONNECTED",
+                "llm_backend": "DISABLED",
                 "session_started_at": self.session_memory.started_at,
             }
             duration_ms = int((time.time() - start_time) * 1000)

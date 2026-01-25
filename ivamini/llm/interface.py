@@ -1,4 +1,3 @@
-import ollama
 import time
 
 SYSTEM_PROMPT = """
@@ -74,41 +73,26 @@ CRITICAL RULES:
 """
 
 class LocalLLM:
-    def __init__(self, model: str = "llama3.2:1b"):
+    """
+    Placeholder LLM interface for IVA-Cortex v1.0 (Reasoning Only).
+    This system does NOT support local LLM execution.
+    """
+    def __init__(self, model: str = "placeholder"):
         self.model = model
 
     def analyze(self, prompt: str, system_prompt: str = None) -> dict:
+        """
+        Placeholder interface. Always raises exception.
+        """
         start_time = time.time()
         
-        # Use provided system prompt or default
-        if system_prompt is None:
-            system_prompt = SYSTEM_PROMPT
-        
-        try:
-            response = ollama.chat(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": prompt},
-                ]
-            )
+        # Simulate processing time
+        duration_ms = int((time.time() - start_time) * 1000)
 
-            content = response["message"]["content"].strip()
-            duration_ms = int((time.time() - start_time) * 1000)
-
-            return {
-                "status": "SUCCESS",
-                "summary": content[:400],
-                "confidence": "LOCAL_LLM_OLLAMA_LLAMA3_1B",
-                "raw_output": content,
-                "duration_ms": duration_ms
-            }
-        except Exception as e:
-            duration_ms = int((time.time() - start_time) * 1000)
-            return {
-                "status": "ERROR",
-                "error": f"Ollama connection failed: {str(e)}",
-                "confidence": None,
-                "raw_output": "",
-                "duration_ms": duration_ms
-            }
+        return {
+            "status": "ERROR",
+            "error": "LLM backend not configured. IVA-Cortex is a THINKING-ONLY system.",
+            "confidence": None,
+            "raw_output": "",
+            "duration_ms": duration_ms
+        }
